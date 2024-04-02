@@ -5,6 +5,10 @@ IFS=$'\n\t'
 # Paths to files with IP addresses
 OLD_IP_FILE="/var/log/rugov_blacklist/old_blacklist.txt"
 NEW_IP_FILE="/var/log/rugov_blacklist/blacklist.txt"
+FMT_LOGS=""
+if [[ -f "/etc/rsyslog.d/51-iptables-rugov.conf" ]]; then
+	FMT_LOGS="do"
+fi
 
 # Rename the existing blacklist.txt file to old_blacklist.txt
 mv "$NEW_IP_FILE" "$OLD_IP_FILE"
@@ -33,7 +37,9 @@ added=0
 removed=0
 for addr in "${new_addresses[@]}"; do
 	if ! sudo iptables -t raw -C PREROUTING -s "$addr" -j DROP &>/dev/null; then
-		iptables -t raw -A PREROUTING -s "$addr" -j LOG --log-prefix "Blocked RUGOV IP attempt: "
+		if [[ "$FMT_LOGS" ]]; then
+			iptables -t raw -A PREROUTING -s "$addr" -j LOG --log-prefix "Blocked RUGOV IP attempt: "
+		fi
 		iptables -t raw -A PREROUTING -s "$addr" -j DROP
 		((added++)) || true
 	fi
@@ -41,7 +47,7 @@ done
 
 for addr in "${old_addresses[@]}"; do
 	if ! grep -q "$addr" "$NEW_IP_FILE"; then
-		iptables -t raw -D PREROUTING -s "$addr" -j LOG --log-prefix "Blocked RUGOV IP attempt: "
+		iptables -t raw -D PREROUTING -s "$addr" -j LOG --log-prefix "Blocked RUGOV IP attempt: " || true
 		iptables -t raw -D PREROUTING -s "$addr" -j DROP
 		((removed++)) || true
 	fi
