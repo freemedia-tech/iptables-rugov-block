@@ -45,6 +45,6 @@ touch /var/log/rugov_blacklist/blacklist.txt
 echo "Running initial setup process..."
 /var/log/rugov_blacklist/updater.sh
 
-ln -s /var/log/rugov_blacklist/updater.sh /etc/cron.daily/rugov_updater.sh
+ln -sf /var/log/rugov_blacklist/updater.sh /etc/cron.daily/rugov_updater
 
 echo "Installation finished successfully!"
