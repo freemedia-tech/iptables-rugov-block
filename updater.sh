@@ -36,19 +36,31 @@ done < "$NEW_IP_FILE"
 added=0
 removed=0
 for addr in "${new_addresses[@]}"; do
-	if ! sudo iptables -t raw -C PREROUTING -s "$addr" -j DROP &>/dev/null; then
+	if [[ $(echo "$addr" | grep -c ":") -ge 1 ]]; then
+		FMT_IPCMD="ip6tables"
+	else
+		FMT_IPCMD="iptables"
+	fi
+
+	if ! sudo "$FMT_IPCMD" -n -t raw -C PREROUTING -s "$addr" -j DROP &>/dev/null; then
 		if [[ "$FMT_LOGS" ]]; then
-			iptables -t raw -A PREROUTING -s "$addr" -j LOG --log-prefix "Blocked RUGOV IP attempt: "
+			"$FMT_IPCMD" -t raw -A PREROUTING -s "$addr" -j LOG --log-prefix "Blocked RUGOV IP attempt: "
 		fi
-		iptables -t raw -A PREROUTING -s "$addr" -j DROP
+		"$FMT_IPCMD" -t raw -A PREROUTING -s "$addr" -j DROP
 		((added++)) || true
 	fi
 done
 
 for addr in "${old_addresses[@]}"; do
+	if [[ $(echo "$addr" | grep -c ":") -ge 1 ]]; then
+		FMT_IPCMD="ip6tables"
+	else
+		FMT_IPCMD="iptables"
+	fi
+
 	if ! grep -q "$addr" "$NEW_IP_FILE"; then
-		iptables -t raw -D PREROUTING -s "$addr" -j LOG --log-prefix "Blocked RUGOV IP attempt: " || true
-		iptables -t raw -D PREROUTING -s "$addr" -j DROP
+		"$FMT_IPCMD" -t raw -D PREROUTING -s "$addr" -j LOG --log-prefix "Blocked RUGOV IP attempt: " || true
+		"$FMT_IPCMD" -t raw -D PREROUTING -s "$addr" -j DROP
 		((removed++)) || true
 	fi
 done
