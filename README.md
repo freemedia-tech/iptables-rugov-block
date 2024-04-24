@@ -18,5 +18,5 @@ All the logs are in the file /var/log/rugov_blacklist/blacklist.log . Keep in mi
 - makes directory /var/log/rugov_blacklist/
 - puts there all necessary files
 - runs the update process 
-- installs cron script to /etc/cron.daily/rugov_updater.sh
+- installs cron script to /etc/cron.daily/rugov_updater
 
