@@ -8,6 +8,7 @@ You can find all the original instructions from the author of this solution here
 
 ## How to use
 
+First, check that you have all necessary packages: `sudo apt-get install iptables-persistent` and `sudo apt-get install rsyslog` if you want to keep logs.
 Clone this repo to your server and run `sudo ./install.sh`
 To enable logging of all requests from forbidden ips run `sudo ./install.sh --log` instead. This requires rsyslogd to be up and running. If you are unsure - install it without logs.
 All the logs are in the file /var/log/rugov_blacklist/blacklist.log . Keep in mind - if your target could be interesting, you can get a lot of disk space used by this log!

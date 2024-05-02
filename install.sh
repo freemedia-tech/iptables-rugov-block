@@ -16,14 +16,14 @@ if [[ "$FMTCURID" != "0" ]]; then
 fi
 
 if [[ ! -d "/etc/iptables/" ]]; then
-	echo "The script is intended to be used with iptables"
+	echo "The script is intended to be used with iptables. Are you sure all the necessary packages are installed? Run: 'sudo apt-get install iptables-persistent'"
 	exit 2
 fi
 
 if [[ "$FMTDOLOGS" ]]; then
 	echo "Installing rsyslogd config..."
 	if [[ ! -f "/etc/rsyslog.d/50-default.conf" ]]; then
-		echo "rsyslog.d/50-default.conf not found, there is no place to put the new config file"
+		echo "rsyslog.d/50-default.conf not found, are you sure rsyslogd is installed? Run: 'sudo apt-get install rsyslog'"
 		exit 1
 	fi
 
