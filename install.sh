@@ -26,7 +26,7 @@ if [[ "$FMTDOLOGS" ]]; then
 		if dpkg -s rsyslog &> /dev/null; then
 		    touch /etc/rsyslog.d/50-default.conf
 		else
-			echo "rsyslog.d/50-default.conf not found, are you sure rsyslogd is installed? Run: 'sudo apt-get install rsyslog'"
+			echo "A are you sure rsyslogd is installed? Run: 'sudo apt-get install rsyslog'"
 			exit 1
   		fi
 	fi
