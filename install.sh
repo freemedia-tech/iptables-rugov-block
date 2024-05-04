@@ -35,7 +35,7 @@ fi
 echo "Checking for existing user syslog in adm group..."
 if grep -q "^adm:" /etc/group; then
     if groups syslog | grep -q adm; then
-		break
+		:
 	else
 		useradd -G adm --no-create-home -s /sbin/nologin syslog
 	fi	
