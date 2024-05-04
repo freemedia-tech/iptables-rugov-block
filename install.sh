@@ -32,6 +32,18 @@ if [[ "$FMTDOLOGS" ]]; then
 	service rsyslog restart
 fi
 
+echo "Checking for existing user syslog in adm group..."
+if grep -q "^adm:" /etc/group; then
+    if groups syslog | grep -q adm; then
+		break
+	else
+		useradd -G adm --no-create-home -s /sbin/nologin syslog
+	fi	
+else
+    groupadd adm
+	useradd -G adm --no-create-home -s /sbin/nologin syslog
+fi
+
 echo "Installing common files..."
 mkdir -p /var/log/rugov_blacklist
 chown syslog:adm /var/log/rugov_blacklist
