@@ -23,13 +23,29 @@ fi
 if [[ "$FMTDOLOGS" ]]; then
 	echo "Installing rsyslogd config..."
 	if [[ ! -f "/etc/rsyslog.d/50-default.conf" ]]; then
-		echo "rsyslog.d/50-default.conf not found, are you sure rsyslogd is installed? Run: 'sudo apt-get install rsyslog'"
-		exit 1
+		if dpkg -s rsyslog &> /dev/null; then
+		    touch /etc/rsyslog.d/50-default.conf
+		else
+			echo "A are you sure rsyslogd is installed? Run: 'sudo apt-get install rsyslog'"
+			exit 1
+  		fi
 	fi
 
 	cat "$FMTDIR/51-iptables-rugov.conf" > /etc/rsyslog.d/51-iptables-rugov.conf
 
 	service rsyslog restart
+fi
+
+echo "Checking for existing user syslog in adm group..."
+if grep -q "^adm:" /etc/group; then
+    if groups syslog | grep -q adm; then
+		:
+	else
+		useradd -G adm --no-create-home -s /sbin/nologin syslog
+	fi	
+else
+    groupadd adm
+	useradd -G adm --no-create-home -s /sbin/nologin syslog
 fi
 
 echo "Installing common files..."
