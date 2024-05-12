@@ -22,8 +22,8 @@ fi
 
 if [[ "$FMTDOLOGS" ]]; then
 	echo "Installing rsyslogd config..."
-	if [[ ! -f "/etc/rsyslog.d/50-default.conf" ]]; then
-		echo "rsyslog.d/50-default.conf not found, are you sure rsyslogd is installed? Run: 'sudo apt-get install rsyslog'"
+	if [[ ! -d "/etc/rsyslog.d/" ]]; then
+		echo "/etc/rsyslog.d/ not found, are you sure rsyslogd is installed? Run: 'sudo apt-get install rsyslog'"
 		exit 1
 	fi
 
@@ -34,7 +34,7 @@ fi
 
 echo "Installing common files..."
 mkdir -p /var/log/rugov_blacklist
-chown syslog:adm /var/log/rugov_blacklist
+chown nobody:adm /var/log/rugov_blacklist
 chmod 0755 /var/log/rugov_blacklist
 
 
